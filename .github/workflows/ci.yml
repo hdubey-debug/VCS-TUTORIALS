@@ -30,10 +30,10 @@ jobs:
         
     - name: Syntax check with flake8
       run: |
-        # Check Python syntax errors and undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Check for basic style issues (non-blocking)
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics || true
+        # Check Python syntax errors and undefined names - exclude virtual environment and library directories
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,__pycache__,.git,media
+        # Check for basic style issues in your project files only (non-blocking)
+        flake8 *.py --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics || true
 
   # Job 2: Manim Animation Testing
   manim-tests:
@@ -52,7 +52,15 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y ffmpeg
+        sudo apt-get install -y \
+          ffmpeg \
+          libcairo2-dev \
+          libpango1.0-dev \
+          libgirepository1.0-dev \
+          libglib2.0-dev \
+          libgdk-pixbuf2.0-dev \
+          libffi-dev \
+          pkg-config
         
     - name: Install Python dependencies
       run: |
