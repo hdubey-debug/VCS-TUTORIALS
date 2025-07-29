@@ -1,0 +1,25 @@
+# VCS Tutorials Dependencies
+# Animation and Mathematical Libraries
+
+# Core animation framework
+manim>=0.19.0
+
+# Mathematical and scientific computing
+numpy>=1.21.0
+
+# Additional dependencies for robust Manim installation
+# (These may be automatically installed with manim, but explicit listing ensures compatibility)
+
+# Image and video processing
+Pillow>=8.0.0
+
+# Mathematical rendering
+scipy>=1.7.0
+
+# Development and testing dependencies (optional but recommended)
+# Uncomment the following lines if you want to include development tools:
+
+# flake8>=4.0.0          # Code linting
+# pylint>=2.12.0         # Code analysis
+# pytest>=6.2.0          # Testing framework
+# black>=22.0.0          # Code formatting
