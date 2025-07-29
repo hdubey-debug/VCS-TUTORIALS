@@ -7,6 +7,9 @@ manim>=0.19.0
 # Mathematical and scientific computing
 numpy>=1.21.0
 
+# Required for Manim compatibility
+importlib-metadata>=4.0.0
+
 # Additional dependencies for robust Manim installation
 # (These may be automatically installed with manim, but explicit listing ensures compatibility)
 

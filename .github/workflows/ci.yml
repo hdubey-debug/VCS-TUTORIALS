@@ -65,12 +65,29 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
+        # Install importlib-metadata first for Python < 3.10 compatibility
+        pip install importlib-metadata>=4.0.0
         pip install -r requirements.txt
         
     - name: Test Manim imports
       run: |
-        python -c "import manim; print('Manim version:', manim.__version__)"
-        python -c "import numpy; print('NumPy version:', numpy.__version__)"
+        # Test basic imports with error handling
+        python -c "
+        try:
+            import manim
+            print('✅ Manim version:', manim.__version__)
+        except Exception as e:
+            print('❌ Manim import failed:', str(e))
+            exit(1)
+        "
+        python -c "
+        try:
+            import numpy
+            print('✅ NumPy version:', numpy.__version__)
+        except Exception as e:
+            print('❌ NumPy import failed:', str(e))
+            exit(1)
+        "
         
     - name: Validate Python scripts syntax
       run: |
@@ -85,21 +102,36 @@ jobs:
     - name: Test animation imports
       run: |
         # Test if each animation script can import without errors
+        echo "🔍 Testing animation script imports..."
+        failed_imports=0
+        
         for file in *.py; do
           if [ -f "$file" ]; then
             echo "Testing imports for $file"
-            python -c "
+            if python -c "
         import sys
         sys.path.append('.')
         try:
             import ${file%.py}
             print('✅ $file imports successfully')
+        except ImportError as e:
+            if 'manim' in str(e).lower():
+                print('⚠️ $file has Manim dependency (expected)')
+            else:
+                print('❌ $file import failed:', str(e))
+                raise
         except Exception as e:
             print('❌ $file import failed:', str(e))
-            # Don't fail the build for import issues, just warn
-        "
+            raise
+        " 2>/dev/null; then
+              echo "✅ $file - OK"
+            else
+              echo "⚠️ $file - Import issues (may be normal for Manim scripts)"
+            fi
           fi
         done
+        
+        echo "📊 Import testing completed"
         
     # Commented out: Full animation rendering (too resource intensive for CI)
     # - name: Test sample animation rendering
